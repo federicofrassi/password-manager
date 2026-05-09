@@ -16,14 +16,19 @@
 - [x] Add master password
 - [x] Hash master password
 - [x] Encrypt stored passwords
-- [ ] Hide passwords by default
+- [x] Hide passwords by default
 
 ## Phase 3 - Extra features
 
-- [ ] Add GUI
+- [x] Add GUI
+- [ ] Improve CustomTkinter GUI
 - [ ] Add password generator
-- [ ] Add clipboard copy
+- [x] Add clipboard copy
+- [ ] Add clipboard auto-clear
 - [ ] Add auto-lock
+- [x] Add keyboard navigation
+- [x] Add integrated search bar
+- [x] Add show/hide password system
 
 ## Phase 4 - Advanced Security
 
@@ -33,3 +38,6 @@
 - [ ] Improve encryption architecture
 - [ ] Add secure session handling
 - [ ] Add failed login protection
+- [ ] Add encrypted import/export system
+- [ ] Add password strength checker
+- [ ] Package application for macOS and Windowss
