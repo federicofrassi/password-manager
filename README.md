@@ -49,11 +49,16 @@ The project currently supports:
 ## Planned Improvements
 
 - Password generator
+- Password strength checker
 - Better input validation
 - Improve CustomTkinter GUI layout and styling
 - Stronger key derivation (Argon2/PBKDF2)
 - AES-GCM encryption
+- Clipboard auto-clear system
 - Auto-lock system
+- Encrypted import/export system
+- Keyboard navigation improvements
+- Application packaging for macOS and Windows
 
 ## Note
 
