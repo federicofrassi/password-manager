@@ -22,6 +22,15 @@ def open_main_window(root):
     title_label = tk.Label(root, text="Password Manager", font=("Arial", 20))
     title_label.pack(pady=20)
 
+    search_frame = tk.Frame(root)
+    search_frame.pack(fill="x", padx=20, pady=(0, 10))
+
+    search_label = tk.Label(search_frame, text="Cerca sito/app:")
+    search_label.pack(side="left")
+
+    search_entry = tk.Entry(search_frame)
+    search_entry.pack(side="left", fill="x", expand=True, padx=10)
+
     columns = ("id", "site", "username", "password", "notes")
 
     table_frame = tk.Frame(root)
@@ -65,6 +74,7 @@ def open_main_window(root):
 
         refresh_button.config(text="Aggiorna")
         toggle_password_button.config(text="Mostra password")
+        search_entry.delete(0, tk.END)
 
     def has_open_popup():
         return any(isinstance(window, tk.Toplevel) for window in root.winfo_children())
@@ -199,48 +209,40 @@ def open_main_window(root):
         save_button.pack(pady=15)
         update_window.bind("<Return>", lambda event: save_new_password())
 
-    def open_search_window():
-        if has_open_popup():
-            messagebox.showerror("Errore", "Chiudi la finestra aperta prima di aprirne un'altra.")
-            return
-        search_window = tk.Toplevel(root)
-        search_window.title("Cerca credenziale")
-        search_window.geometry("400x180")
-        setup_popup_window(search_window)
+    def search_from_entry(event=None):
+        search_text = search_entry.get()
 
-        search_label = tk.Label(search_window, text="Cerca sito/app")
-        search_label.pack(pady=10)
+        for row in credentials_table.get_children():
+            credentials_table.delete(row)
 
-        search_entry = tk.Entry(search_window)
-        search_entry.pack(pady=5)
-        search_entry.focus_set()
-
-        def search():
-            search_text = search_entry.get()
-
-            for row in credentials_table.get_children():
-                credentials_table.delete(row)
-
+        if search_text:
             credentials = search_credentials(search_text)
-
-            for credential in credentials:
-                masked_credential = (
-                    credential[0],
-                    credential[1],
-                    credential[2],
-                    "********",
-                    credential[4]
-                )
-                credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
-
             refresh_button.config(text="Mostra tutte")
-            toggle_password_button.config(text="Mostra password")
+        else:
+            credentials = get_all_credentials()
+            refresh_button.config(text="Aggiorna")
 
-            search_window.destroy()
+        for credential in credentials:
+            masked_credential = (
+                credential[0],
+                credential[1],
+                credential[2],
+                "********",
+                credential[4]
+            )
+            credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
 
-        search_button = tk.Button(search_window, text="Cerca", command=search)
-        search_button.pack(pady=15)
-        search_window.bind("<Return>", lambda event: search())
+        toggle_password_button.config(text="Mostra password")
+
+    def clear_search():
+        search_entry.delete(0, tk.END)
+        load_credentials()
+
+    search_entry.bind("<KeyRelease>", search_from_entry)
+    search_entry.bind("<Return>", search_from_entry)
+
+    clear_search_button = tk.Button(search_frame, text="Reset", command=clear_search)
+    clear_search_button.pack(side="right")
 
     def toggle_selected_password():
         selected_item = credentials_table.selection()
@@ -301,11 +303,11 @@ def open_main_window(root):
     add_button = tk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window, width=18)
     add_button.grid(row=0, column=0, padx=5, pady=5)
 
-    search_button = tk.Button(buttons_frame, text="Cerca credenziale", command=open_search_window, width=18)
-    search_button.grid(row=0, column=1, padx=5, pady=5)
-
     refresh_button = tk.Button(buttons_frame, text="Aggiorna", command=load_credentials, width=18)
-    refresh_button.grid(row=0, column=2, padx=5, pady=5)
+    refresh_button.grid(row=0, column=1, padx=5, pady=5)
+
+    copy_password_button = tk.Button(buttons_frame, text="Copia password", command=copy_selected_password, width=18)
+    copy_password_button.grid(row=0, column=2, padx=5, pady=5)
 
     update_button = tk.Button(buttons_frame, text="Modifica password", command=open_update_password_window, width=18)
     update_button.grid(row=1, column=0, padx=5, pady=5)
@@ -315,9 +317,6 @@ def open_main_window(root):
 
     toggle_password_button = tk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password, width=18)
     toggle_password_button.grid(row=1, column=2, padx=5, pady=5)
-
-    copy_password_button = tk.Button(buttons_frame, text="Copia password", command=copy_selected_password, width=18)
-    copy_password_button.grid(row=2, column=1, padx=5, pady=5)
 
     load_credentials()
 
