@@ -24,7 +24,13 @@ def open_main_window(root):
 
     columns = ("id", "site", "username", "password", "notes")
 
-    credentials_table = ttk.Treeview(root, columns=columns, show="headings")
+    table_frame = tk.Frame(root)
+    table_frame.pack(fill="both", expand=True, padx=20, pady=10)
+
+    credentials_table = ttk.Treeview(table_frame, columns=columns, show="headings")
+
+    vertical_scrollbar = ttk.Scrollbar(table_frame, orient="vertical", command=credentials_table.yview)
+    credentials_table.configure(yscrollcommand=vertical_scrollbar.set)
 
     credentials_table.heading("id", text="ID")
     credentials_table.heading("site", text="Sito/App")
@@ -38,7 +44,8 @@ def open_main_window(root):
     credentials_table.column("password", width=200)
     credentials_table.column("notes", width=250)
 
-    credentials_table.pack(fill="both", expand=True, padx=20, pady=10)
+    credentials_table.pack(side="left", fill="both", expand=True)
+    vertical_scrollbar.pack(side="right", fill="y")
 
     def load_credentials():
         for row in credentials_table.get_children():
@@ -51,15 +58,28 @@ def open_main_window(root):
 
         refresh_button.config(text="Aggiorna")
 
+    def has_open_popup():
+        return any(isinstance(window, tk.Toplevel) for window in root.winfo_children())
+
+    def setup_popup_window(popup):
+        popup.transient(root)
+        popup.grab_set()
+        popup.focus_force()
+
     def open_add_credential_window():
+        if has_open_popup():
+            messagebox.showerror("Errore", "Chiudi la finestra aperta prima di aprirne un'altra.")
+            return
         add_window = tk.Toplevel(root)
         add_window.title("Aggiungi credenziale")
         add_window.geometry("400x350")
+        setup_popup_window(add_window)
 
         site_label = tk.Label(add_window, text="Sito/App")
         site_label.pack(pady=5)
         site_entry = tk.Entry(add_window)
         site_entry.pack(pady=5)
+        site_entry.focus_set()
 
         username_label = tk.Label(add_window, text="Username/Email")
         username_label.pack(pady=5)
@@ -96,6 +116,9 @@ def open_main_window(root):
         add_window.bind("<Return>", lambda event: save_credential())
 
     def delete_selected_credential():
+        if has_open_popup():
+            messagebox.showerror("Errore", "Chiudi la finestra aperta prima di continuare.")
+            return
         selected_item = credentials_table.selection()
 
         if not selected_item:
@@ -120,6 +143,9 @@ def open_main_window(root):
                 messagebox.showerror("Errore", "Credenziale non trovata.")
 
     def open_update_password_window():
+        if has_open_popup():
+            messagebox.showerror("Errore", "Chiudi la finestra aperta prima di aprirne un'altra.")
+            return
         selected_item = credentials_table.selection()
 
         if not selected_item:
@@ -133,6 +159,7 @@ def open_main_window(root):
         update_window = tk.Toplevel(root)
         update_window.title("Modifica password")
         update_window.geometry("400x220")
+        setup_popup_window(update_window)
 
         title_label = tk.Label(update_window, text=f"Modifica password per {site}", font=("Arial", 14))
         title_label.pack(pady=15)
@@ -142,6 +169,7 @@ def open_main_window(root):
 
         password_entry = tk.Entry(update_window, show="*")
         password_entry.pack(pady=5)
+        password_entry.focus_set()
 
         def save_new_password():
             new_password = password_entry.get()
@@ -164,15 +192,20 @@ def open_main_window(root):
         update_window.bind("<Return>", lambda event: save_new_password())
 
     def open_search_window():
+        if has_open_popup():
+            messagebox.showerror("Errore", "Chiudi la finestra aperta prima di aprirne un'altra.")
+            return
         search_window = tk.Toplevel(root)
         search_window.title("Cerca credenziale")
         search_window.geometry("400x180")
+        setup_popup_window(search_window)
 
         search_label = tk.Label(search_window, text="Cerca sito/app")
         search_label.pack(pady=10)
 
         search_entry = tk.Entry(search_window)
         search_entry.pack(pady=5)
+        search_entry.focus_set()
 
         def search():
             search_text = search_entry.get()
@@ -193,11 +226,14 @@ def open_main_window(root):
         search_button.pack(pady=15)
         search_window.bind("<Return>", lambda event: search())
 
-    refresh_button = tk.Button(root, text="Aggiorna", command=load_credentials)
-    refresh_button.pack(pady=10)
+    actions_frame = tk.Frame(root)
+    actions_frame.pack(pady=10)
 
-    buttons_frame = tk.Frame(root)
-    buttons_frame.pack(pady=10)
+    refresh_button = tk.Button(actions_frame, text="Aggiorna", command=load_credentials)
+    refresh_button.grid(row=0, column=0, padx=5)
+
+    buttons_frame = tk.Frame(actions_frame)
+    buttons_frame.grid(row=0, column=1, padx=5)
 
     add_button = tk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window)
     add_button.grid(row=0, column=0, padx=5)
@@ -226,6 +262,7 @@ def show_create_master_password_screen(root):
 
     password_entry = tk.Entry(root, show="*")
     password_entry.pack(pady=5)
+    root.after(100, password_entry.focus_force)
 
     confirm_label = tk.Label(root, text="Confirm Master Password")
     confirm_label.pack()
@@ -243,6 +280,9 @@ def show_create_master_password_screen(root):
 
         if password != confirm_password:
             messagebox.showerror("Errore", "Le password non coincidono.")
+            password_entry.delete(0, tk.END)
+            confirm_entry.delete(0, tk.END)
+            password_entry.focus_force()
             return
 
         save_master_password(password)
@@ -251,6 +291,7 @@ def show_create_master_password_screen(root):
 
     create_button = tk.Button(root, text="Crea", command=create_master_password)
     create_button.pack(pady=15)
+    root.bind("<Return>", lambda event: create_master_password())
 
 
 def show_login_screen(root):
@@ -265,6 +306,7 @@ def show_login_screen(root):
 
     password_entry = tk.Entry(root, show="*")
     password_entry.pack(pady=10)
+    root.after(100, password_entry.focus_force)
 
     def login():
         password = password_entry.get()
@@ -273,6 +315,8 @@ def show_login_screen(root):
             open_main_window(root)
         else:
             messagebox.showerror("Errore", "Master password errata.")
+            password_entry.delete(0, tk.END)
+            password_entry.focus_force()
 
     login_button = tk.Button(root, text="Accedi", command=login)
     login_button.pack(pady=10)
