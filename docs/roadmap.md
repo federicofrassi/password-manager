@@ -2,25 +2,34 @@
 
 ## Phase 1 - Basic version
 
-- [ ] Create project structure
-- [ ] Add SQLite database
-- [ ] Add credential creation
-- [ ] Add credential listing
-- [ ] Add credential search
-- [ ] Add credential deletion
-- [ ] Add password editing
+- [x] Create project structure
+- [x] Add SQLite database
+- [x] Add credential creation
+- [x] Add credential listing
+- [x] Add credential search
+- [x] Add credential deletion
+- [x] Add password editing
 
 
 ## Phase 2 - Security
 
-- [ ] Add master password
-- [ ] Hash master password
-- [ ] Encrypt stored passwords
+- [x] Add master password
+- [x] Hash master password
+- [x] Encrypt stored passwords
 - [ ] Hide passwords by default
 
 ## Phase 3 - Extra features
 
+- [ ] Add GUI
 - [ ] Add password generator
 - [ ] Add clipboard copy
 - [ ] Add auto-lock
-- [ ] Add GUI
+
+## Phase 4 - Advanced Security
+
+- [ ] Derive encryption key from master password
+- [ ] Add PBKDF2 or Argon2
+- [ ] Add salt generation
+- [ ] Improve encryption architecture
+- [ ] Add secure session handling
+- [ ] Add failed login protection
