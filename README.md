@@ -14,6 +14,7 @@ A local password manager written in Python.
 - SHA-256 master password hashing
 - Password encryption using Fernet
 - Interactive CLI interface
+- Tkinter GUI (work in progress)
 
 ## Technologies
 
@@ -21,6 +22,7 @@ A local password manager written in Python.
 - SQLite
 - Cryptography (Fernet)
 - Git & GitHub
+- Tkinter
 
 ## Security Features
 
@@ -35,6 +37,7 @@ The project currently supports:
 - Authentication system
 - Password encryption/decryption
 - CRUD operations through CLI
+- Initial GUI implementation using Tkinter
 
 ## Planned Improvements
 
@@ -42,7 +45,7 @@ The project currently supports:
 - Hide/show password option
 - Clipboard support
 - Better input validation
-- GUI interface
+- Improve GUI
 - Stronger key derivation (Argon2/PBKDF2)
 - AES-GCM encryption
 - Auto-lock system
