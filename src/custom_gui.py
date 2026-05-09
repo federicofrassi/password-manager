@@ -4,7 +4,6 @@ from tkinter import messagebox
 from database import (
     create_table,
     get_all_credentials,
-    search_credentials,
     add_credential,
     delete_credential,
     update_password
@@ -70,6 +69,8 @@ def open_main_window(root):
     buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
     buttons_frame.pack(fill="x", padx=25, pady=(10, 25))
 
+    credential_rows = []
+
     selected_credential = {
         "id": None,
         "password": None,
@@ -81,6 +82,7 @@ def open_main_window(root):
     def clear_credentials_list():
         for widget in credentials_frame.winfo_children():
             widget.destroy()
+        credential_rows.clear()
 
     def reset_selected_credential():
         row = selected_credential["row"]
@@ -97,6 +99,9 @@ def open_main_window(root):
 
     def select_credential(row_frame, credential_id, password, password_label):
         if selected_credential["row"] is not None:
+            if selected_credential["visible"] and selected_credential["password_label"] is not None:
+                selected_credential["password_label"].configure(text="********")
+
             selected_credential["row"].configure(border_width=0)
 
         selected_credential["id"] = credential_id
@@ -142,6 +147,8 @@ def open_main_window(root):
             anchor="w"
         )
         password_label.grid(row=0, column=2, padx=8, pady=12, sticky="w")
+
+        credential_rows.append((row_frame, credential_id, password, password_label))
 
         notes_label = ctk.CTkLabel(
             row_frame,
@@ -370,10 +377,47 @@ def open_main_window(root):
         save_button.pack(pady=20)
         update_window.bind("<Return>", lambda event: save_new_password())
 
+    def scroll_to_row(index):
+        if not credential_rows:
+            return
+
+        if len(credential_rows) == 1:
+            scroll_position = 0
+        else:
+            scroll_position = index / (len(credential_rows) - 1)
+
+        credentials_frame._parent_canvas.yview_moveto(scroll_position)
+
+    def move_selection(direction):
+        if not credential_rows:
+            return
+
+        current_index = -1
+
+        for index, (row, credential_id, password, password_label) in enumerate(credential_rows):
+            if credential_id == selected_credential["id"]:
+                current_index = index
+                break
+
+        if direction == "down":
+            next_index = min(current_index + 1, len(credential_rows) - 1)
+        else:
+            next_index = max(current_index - 1, 0)
+
+        row, credential_id, password, password_label = credential_rows[next_index]
+
+        select_credential(row, credential_id, password, password_label)
+        scroll_to_row(next_index)
+
+        row.focus_force()
+
     reset_button = ctk.CTkButton(search_frame, text="Reset", command=clear_search, width=90, height=40)
     reset_button.pack(side="right")
 
     search_entry.bind("<KeyRelease>", search_from_entry)
+
+    root.bind("<Down>", lambda event: move_selection("down"))
+    root.bind("<Up>", lambda event: move_selection("up"))
 
     add_button = ctk.CTkButton(buttons_frame, text="Aggiungi", command=open_add_credential_window, width=140, height=40)
     add_button.pack(side="left", padx=6)
