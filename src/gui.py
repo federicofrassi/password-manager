@@ -54,7 +54,14 @@ def open_main_window(root):
         credentials = get_all_credentials()
 
         for credential in credentials:
-            credentials_table.insert("", "end", values=credential)
+            masked_credential = (
+                credential[0],
+                credential[1],
+                credential[2],
+                "********",
+                credential[4]
+            )
+            credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
 
         refresh_button.config(text="Aggiorna")
 
@@ -216,7 +223,14 @@ def open_main_window(root):
             credentials = search_credentials(search_text)
 
             for credential in credentials:
-                credentials_table.insert("", "end", values=credential)
+                masked_credential = (
+                    credential[0],
+                    credential[1],
+                    credential[2],
+                    "********",
+                    credential[4]
+                )
+                credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
 
             refresh_button.config(text="Mostra tutte")
 
@@ -225,6 +239,41 @@ def open_main_window(root):
         search_button = tk.Button(search_window, text="Cerca", command=search)
         search_button.pack(pady=15)
         search_window.bind("<Return>", lambda event: search())
+
+    def toggle_selected_password():
+        selected_item = credentials_table.selection()
+
+        if not selected_item:
+            messagebox.showerror("Errore", "Seleziona una credenziale.")
+            return
+
+        item_id = selected_item[0]
+        credential = credentials_table.item(item_id, "values")
+        tags = credentials_table.item(item_id, "tags")
+
+        real_password = tags[0]
+        password_state = tags[1]
+
+        if password_state == "hidden":
+            updated_credential = (
+                credential[0],
+                credential[1],
+                credential[2],
+                real_password,
+                credential[4]
+            )
+            credentials_table.item(item_id, values=updated_credential, tags=(real_password, "visible"))
+            toggle_password_button.config(text="Nascondi password")
+        else:
+            updated_credential = (
+                credential[0],
+                credential[1],
+                credential[2],
+                "********",
+                credential[4]
+            )
+            credentials_table.item(item_id, values=updated_credential, tags=(real_password, "hidden"))
+            toggle_password_button.config(text="Mostra password")
 
     actions_frame = tk.Frame(root)
     actions_frame.pack(pady=10)
@@ -246,6 +295,9 @@ def open_main_window(root):
 
     search_button = tk.Button(buttons_frame, text="Cerca credenziale", command=open_search_window)
     search_button.grid(row=0, column=3, padx=5)
+
+    toggle_password_button = tk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password)
+    toggle_password_button.grid(row=0, column=4, padx=5)
 
     load_credentials()
 
