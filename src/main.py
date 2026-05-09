@@ -1,5 +1,18 @@
-from database import create_table, add_credential, get_all_credentials, search_credentials, delete_credential, update_password
-
+from database import (
+    create_table, 
+    add_credential, 
+    get_all_credentials, 
+    search_credentials, 
+    delete_credential, 
+    update_password
+)
+from auth import (
+    create_auth_table,
+    master_password_exists,
+    save_master_password,
+    verify_master_password
+)
+from getpass import getpass
 
 def show_menu():
     print("\n=== PASSWORD MANAGER ===")
@@ -26,6 +39,45 @@ def print_credentials(credentials):
 
 
 create_table()
+create_auth_table()
+
+if not master_password_exists():
+
+    print("=== CREAZIONE MASTER PASSWORD ===")
+
+    while True:
+        #usiamo getpass e non input x maggiore sicurezza
+        master_password = getpass("Crea una master password: ")
+
+        if not master_password:
+            print("La master password non può essere vuota.")
+            continue
+
+        confirm_password = getpass("Conferma master password: ")
+
+        if master_password != confirm_password:
+            print("Le password non coincidono.")
+            continue
+
+        save_master_password(master_password)
+
+        print("Master password salvata correttamente.")
+        break
+
+else:
+
+    print("=== LOGIN ===")
+
+    master_password = getpass("Inserisci la master password: ")
+
+    if verify_master_password(master_password):
+
+        print("Accesso consentito.")
+
+    else:
+
+        print("Master password errata.")
+        exit()
 
 while True:
     show_menu()
