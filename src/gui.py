@@ -17,7 +17,7 @@ def open_main_window(root):
     root.unbind("<Return>")
 
     root.title("Password Manager")
-    root.geometry("900x500")
+    root.geometry("1000x600")
 
     title_label = tk.Label(root, text="Password Manager", font=("Arial", 20))
     title_label.pack(pady=20)
@@ -41,7 +41,7 @@ def open_main_window(root):
     credentials_table.column("id", width=50)
     credentials_table.column("site", width=150)
     credentials_table.column("username", width=200)
-    credentials_table.column("password", width=200)
+    credentials_table.column("password", width=130)
     credentials_table.column("notes", width=250)
 
     credentials_table.pack(side="left", fill="both", expand=True)
@@ -64,6 +64,7 @@ def open_main_window(root):
             credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
 
         refresh_button.config(text="Aggiorna")
+        toggle_password_button.config(text="Mostra password")
 
     def has_open_popup():
         return any(isinstance(window, tk.Toplevel) for window in root.winfo_children())
@@ -233,6 +234,7 @@ def open_main_window(root):
                 credentials_table.insert("", "end", values=masked_credential, tags=(credential[3], "hidden"))
 
             refresh_button.config(text="Mostra tutte")
+            toggle_password_button.config(text="Mostra password")
 
             search_window.destroy()
 
@@ -275,29 +277,47 @@ def open_main_window(root):
             credentials_table.item(item_id, values=updated_credential, tags=(real_password, "hidden"))
             toggle_password_button.config(text="Mostra password")
 
-    actions_frame = tk.Frame(root)
-    actions_frame.pack(pady=10)
+    def copy_selected_password():
+        selected_item = credentials_table.selection()
 
-    refresh_button = tk.Button(actions_frame, text="Aggiorna", command=load_credentials)
-    refresh_button.grid(row=0, column=0, padx=5)
+        if not selected_item:
+            messagebox.showerror("Errore", "Seleziona una credenziale.")
+            return
 
-    buttons_frame = tk.Frame(actions_frame)
-    buttons_frame.grid(row=0, column=1, padx=5)
+        item_id = selected_item[0]
+        tags = credentials_table.item(item_id, "tags")
 
-    add_button = tk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window)
-    add_button.grid(row=0, column=0, padx=5)
+        real_password = tags[0]
 
-    delete_button = tk.Button(buttons_frame, text="Elimina credenziale", command=delete_selected_credential)
-    delete_button.grid(row=0, column=1, padx=5)
+        root.clipboard_clear()
+        root.clipboard_append(real_password)
+        root.update()
 
-    update_button = tk.Button(buttons_frame, text="Modifica password", command=open_update_password_window)
-    update_button.grid(row=0, column=2, padx=5)
+        messagebox.showinfo("Successo", "Password copiata negli appunti.")
 
-    search_button = tk.Button(buttons_frame, text="Cerca credenziale", command=open_search_window)
-    search_button.grid(row=0, column=3, padx=5)
+    buttons_frame = tk.Frame(root)
+    buttons_frame.pack(pady=10)
 
-    toggle_password_button = tk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password)
-    toggle_password_button.grid(row=0, column=4, padx=5)
+    add_button = tk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window, width=18)
+    add_button.grid(row=0, column=0, padx=5, pady=5)
+
+    search_button = tk.Button(buttons_frame, text="Cerca credenziale", command=open_search_window, width=18)
+    search_button.grid(row=0, column=1, padx=5, pady=5)
+
+    refresh_button = tk.Button(buttons_frame, text="Aggiorna", command=load_credentials, width=18)
+    refresh_button.grid(row=0, column=2, padx=5, pady=5)
+
+    update_button = tk.Button(buttons_frame, text="Modifica password", command=open_update_password_window, width=18)
+    update_button.grid(row=1, column=0, padx=5, pady=5)
+
+    delete_button = tk.Button(buttons_frame, text="Elimina credenziale", command=delete_selected_credential, width=18)
+    delete_button.grid(row=1, column=1, padx=5, pady=5)
+
+    toggle_password_button = tk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password, width=18)
+    toggle_password_button.grid(row=1, column=2, padx=5, pady=5)
+
+    copy_password_button = tk.Button(buttons_frame, text="Copia password", command=copy_selected_password, width=18)
+    copy_password_button.grid(row=2, column=1, padx=5, pady=5)
 
     load_credentials()
 
