@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Database locali
+*.db
+*.sqlite
+*.sqlite3
+
+# Ambiente virtuale
+venv/
+.venv/
+
+# File sensibili
+.env
+*.key
+*.pem
+
+# Sistema
+.DS_Store
