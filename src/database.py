@@ -75,3 +75,20 @@ def search_credentials(site):
 
     return credentials
 
+#elimina credenziali
+def delete_credential(credential_id): 
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        DELETE FROM credentials
+
+        WHERE id = ?
+
+    """, (credential_id,))
+    
+    conn.commit()
+    conn.close()
+
+

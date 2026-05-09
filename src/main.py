@@ -1,4 +1,4 @@
-from database import create_table, add_credential, get_all_credentials, search_credentials
+from database import create_table, add_credential, get_all_credentials, search_credentials, delete_credential
 
 
 def show_menu():
@@ -6,6 +6,7 @@ def show_menu():
     print("1. Aggiungi credenziale")
     print("2. Mostra credenziali")
     print("3. Cerca credenziale")
+    print("4. Elimina credenziale")
     print("0. Esci")
 
 
@@ -46,6 +47,15 @@ while True:
         search = input("Cerca sito/app: ")
         credentials = search_credentials(search)
         print_credentials(credentials)
+
+    elif choice == "4": 
+        credential_id = input("ID credenziale da eliminare: ")
+
+        if credential_id.isdigit(): 
+            delete_credential(int(credential_id))
+            print("Credenziale eliminata correttamente")
+        else: 
+            print("ID non valido")
 
     elif choice == "0":
         print("Uscita dal programma.")

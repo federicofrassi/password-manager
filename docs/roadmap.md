@@ -7,8 +7,9 @@
 - [ ] Add credential creation
 - [ ] Add credential listing
 - [ ] Add credential search
-- [ ] Add credential editing
 - [ ] Add credential deletion
+- [ ] Add credential editing
+
 
 ## Phase 2 - Security
 
