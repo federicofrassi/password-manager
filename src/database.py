@@ -22,4 +22,34 @@ def create_table():
     conn.commit()
     conn.close()
 
-    
+#aggiunge una nuova riga alla tabella 
+def add_credential(site, username, password, notes=""): 
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        INSERT INTO credentials (site, username, password, notes)
+
+        VALUES (?, ?, ?, ?)
+
+    """, (site, username, password, notes))
+    conn.commit() 
+    conn.close()
+
+#legge tutte le righe della tabella credentials
+def get_all_credentials():
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, site, username, password, notes
+        FROM credentials
+    """)
+
+    credentials = cursor.fetchall() #prende i risultati della query e li trasforma in una lista python
+
+    conn.close()
+
+    return credentials
+   
