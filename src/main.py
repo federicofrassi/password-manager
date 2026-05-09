@@ -12,6 +12,11 @@ from auth import (
     save_master_password,
     verify_master_password
 )
+from crypto_utils import (
+    initialize_key, 
+    encrypt_password, 
+    decrypt_password
+)
 from getpass import getpass
 
 def show_menu():
@@ -40,6 +45,9 @@ def print_credentials(credentials):
 
 create_table()
 create_auth_table()
+
+initialize_key() #x cifratura
+
 
 if not master_password_exists():
 

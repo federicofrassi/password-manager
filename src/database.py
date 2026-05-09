@@ -1,4 +1,5 @@
 import sqlite3
+from crypto_utils import encrypt_password, decrypt_password
 
 DB_NAME = "password_manager.db"
 
@@ -27,13 +28,15 @@ def add_credential(site, username, password, notes=""):
     conn = connect()
     cursor = conn.cursor()
 
+    encrypted_password = encrypt_password(password)
+    
     cursor.execute("""
 
         INSERT INTO credentials (site, username, password, notes)
 
         VALUES (?, ?, ?, ?)
 
-    """, (site, username, password, notes))
+    """, (site, username, encrypted_password, notes))
     conn.commit() 
     conn.close()
 
@@ -48,10 +51,19 @@ def get_all_credentials():
     """)
 
     credentials = cursor.fetchall() #prende i risultati della query e li trasforma in una lista python
+    decrypted_credentials = []
 
+    for credential in credentials:
+        decrypted_credentials.append((
+            credential[0],
+            credential[1],
+            credential[2],
+            decrypt_password(credential[3]),
+            credential[4]
+        ))
     conn.close()
 
-    return credentials
+    return decrypted_credentials
 
 
 
@@ -70,10 +82,19 @@ def search_credentials(site):
 
     """, (f"{site}%",))
     credentials = cursor.fetchall()
+    decrypted_credentials = []
 
+    for credential in credentials:
+        decrypted_credentials.append((
+            credential[0],
+            credential[1],
+            credential[2],
+            decrypt_password(credential[3]),
+            credential[4]
+        ))
     conn.close()
 
-    return credentials
+    return decrypted_credentials
 
 #elimina credenziali
 def delete_credential(credential_id): 
@@ -99,6 +120,8 @@ def update_password(credential_id, new_password):
     conn = connect()
     cursor = conn.cursor()
 
+    encrypted_password = encrypt_password(new_password)
+
     cursor.execute("""
 
         UPDATE credentials
@@ -107,7 +130,7 @@ def update_password(credential_id, new_password):
 
         WHERE id = ?
 
-    """, (new_password, credential_id))
+    """, (encrypted_password, credential_id))
 
     updated_rows = cursor.rowcount
 
