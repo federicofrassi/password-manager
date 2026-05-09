@@ -1,10 +1,11 @@
-from database import create_table, add_credential, get_all_credentials
+from database import create_table, add_credential, get_all_credentials, search_credentials
 
 
 def show_menu():
     print("\n=== PASSWORD MANAGER ===")
     print("1. Aggiungi credenziale")
     print("2. Mostra credenziali")
+    print("3. Cerca credenziale")
     print("0. Esci")
 
 
@@ -39,6 +40,11 @@ while True:
 
     elif choice == "2":
         credentials = get_all_credentials()
+        print_credentials(credentials)
+
+    elif choice == "3": 
+        search = input("Cerca sito/app: ")
+        credentials = search_credentials(search)
         print_credentials(credentials)
 
     elif choice == "0":

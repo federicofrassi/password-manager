@@ -52,4 +52,26 @@ def get_all_credentials():
     conn.close()
 
     return credentials
-   
+
+
+
+#ricerca credenziali per sito 
+def search_credentials(site): 
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        SELECT id, site, username, password, notes
+
+        FROM credentials
+
+        WHERE site LIKE ?
+
+    """, (f"{site}%",))
+    credentials = cursor.fetchall()
+
+    conn.close()
+
+    return credentials
+
