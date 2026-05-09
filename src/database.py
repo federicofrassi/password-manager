@@ -87,8 +87,32 @@ def delete_credential(credential_id):
         WHERE id = ?
 
     """, (credential_id,))
+
+    deleted_rows = cursor.rowcount
     
     conn.commit()
     conn.close()
+    return deleted_rows > 0
+
+#modifica password
+def update_password(credential_id, new_password):
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        UPDATE credentials
+
+        SET password = ?
+
+        WHERE id = ?
+
+    """, (new_password, credential_id))
+
+    updated_rows = cursor.rowcount
+
+    conn.commit()
+    conn.close()
+    return updated_rows > 0
 
 
