@@ -19,21 +19,21 @@ def open_main_window(root):
     root.title("Password Manager")
     root.geometry("1000x600")
 
-    title_label = tk.Label(root, text="Password Manager", font=("Arial", 20))
+    title_label = ttk.Label(root, text="Password Manager", style="Title.TLabel")
     title_label.pack(pady=20)
 
-    search_frame = tk.Frame(root)
+    search_frame = ttk.Frame(root)
     search_frame.pack(fill="x", padx=20, pady=(0, 10))
 
-    search_label = tk.Label(search_frame, text="Cerca sito/app:")
+    search_label = ttk.Label(search_frame, text="Cerca sito/app:")
     search_label.pack(side="left")
 
-    search_entry = tk.Entry(search_frame)
+    search_entry = ttk.Entry(search_frame)
     search_entry.pack(side="left", fill="x", expand=True, padx=10)
 
     columns = ("id", "site", "username", "password", "notes")
 
-    table_frame = tk.Frame(root)
+    table_frame = ttk.Frame(root)
     table_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
     credentials_table = ttk.Treeview(table_frame, columns=columns, show="headings")
@@ -241,7 +241,7 @@ def open_main_window(root):
     search_entry.bind("<KeyRelease>", search_from_entry)
     search_entry.bind("<Return>", search_from_entry)
 
-    clear_search_button = tk.Button(search_frame, text="Reset", command=clear_search)
+    clear_search_button = ttk.Button(search_frame, text="Reset", command=clear_search)
     clear_search_button.pack(side="right")
 
     def toggle_selected_password():
@@ -297,25 +297,25 @@ def open_main_window(root):
 
         messagebox.showinfo("Successo", "Password copiata negli appunti.")
 
-    buttons_frame = tk.Frame(root)
+    buttons_frame = ttk.Frame(root)
     buttons_frame.pack(pady=10)
 
-    add_button = tk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window, width=18)
+    add_button = ttk.Button(buttons_frame, text="Aggiungi credenziale", command=open_add_credential_window, width=18)
     add_button.grid(row=0, column=0, padx=5, pady=5)
 
-    refresh_button = tk.Button(buttons_frame, text="Aggiorna", command=load_credentials, width=18)
+    refresh_button = ttk.Button(buttons_frame, text="Aggiorna", command=load_credentials, width=18)
     refresh_button.grid(row=0, column=1, padx=5, pady=5)
 
-    copy_password_button = tk.Button(buttons_frame, text="Copia password", command=copy_selected_password, width=18)
+    copy_password_button = ttk.Button(buttons_frame, text="Copia password", command=copy_selected_password, width=18)
     copy_password_button.grid(row=0, column=2, padx=5, pady=5)
 
-    update_button = tk.Button(buttons_frame, text="Modifica password", command=open_update_password_window, width=18)
+    update_button = ttk.Button(buttons_frame, text="Modifica password", command=open_update_password_window, width=18)
     update_button.grid(row=1, column=0, padx=5, pady=5)
 
-    delete_button = tk.Button(buttons_frame, text="Elimina credenziale", command=delete_selected_credential, width=18)
+    delete_button = ttk.Button(buttons_frame, text="Elimina credenziale", command=delete_selected_credential, width=18)
     delete_button.grid(row=1, column=1, padx=5, pady=5)
 
-    toggle_password_button = tk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password, width=18)
+    toggle_password_button = ttk.Button(buttons_frame, text="Mostra password", command=toggle_selected_password, width=18)
     toggle_password_button.grid(row=1, column=2, padx=5, pady=5)
 
     load_credentials()
@@ -325,20 +325,20 @@ def show_create_master_password_screen(root):
     root.title("Create Master Password")
     root.geometry("400x250")
 
-    title_label = tk.Label(root, text="Crea Master Password", font=("Arial", 16))
+    title_label = ttk.Label(root, text="Crea Master Password", style="Subtitle.TLabel")
     title_label.pack(pady=20)
 
-    password_label = tk.Label(root, text="Master Password")
+    password_label = ttk.Label(root, text="Master Password")
     password_label.pack()
 
-    password_entry = tk.Entry(root, show="*")
+    password_entry = ttk.Entry(root, show="*")
     password_entry.pack(pady=5)
     root.after(100, password_entry.focus_force)
 
-    confirm_label = tk.Label(root, text="Confirm Master Password")
+    confirm_label = ttk.Label(root, text="Confirm Master Password")
     confirm_label.pack()
 
-    confirm_entry = tk.Entry(root, show="*")
+    confirm_entry = ttk.Entry(root, show="*")
     confirm_entry.pack(pady=5)
 
     def create_master_password():
@@ -360,7 +360,7 @@ def show_create_master_password_screen(root):
         messagebox.showinfo("Successo", "Master password creata correttamente.")
         open_main_window(root)
 
-    create_button = tk.Button(root, text="Crea", command=create_master_password)
+    create_button = ttk.Button(root, text="Crea", command=create_master_password)
     create_button.pack(pady=15)
     root.bind("<Return>", lambda event: create_master_password())
 
@@ -369,13 +369,13 @@ def show_login_screen(root):
     root.title("Login")
     root.geometry("400x220")
 
-    title_label = tk.Label(root, text="Login", font=("Arial", 16))
+    title_label = ttk.Label(root, text="Login", style="Subtitle.TLabel")
     title_label.pack(pady=20)
 
-    password_label = tk.Label(root, text="Master Password")
+    password_label = ttk.Label(root, text="Master Password")
     password_label.pack()
 
-    password_entry = tk.Entry(root, show="*")
+    password_entry = ttk.Entry(root, show="*")
     password_entry.pack(pady=10)
     root.after(100, password_entry.focus_force)
 
@@ -389,7 +389,7 @@ def show_login_screen(root):
             password_entry.delete(0, tk.END)
             password_entry.focus_force()
 
-    login_button = tk.Button(root, text="Accedi", command=login)
+    login_button = ttk.Button(root, text="Accedi", command=login)
     login_button.pack(pady=10)
     root.bind("<Return>", lambda event: login())
 
@@ -400,6 +400,12 @@ def main():
     initialize_key()
 
     root = tk.Tk()
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Title.TLabel", font=("Arial", 22, "bold"))
+    style.configure("Subtitle.TLabel", font=("Arial", 16, "bold"))
+    style.configure("Treeview", rowheight=26)
+    style.configure("Treeview.Heading", font=("Arial", 11, "bold"))
 
     if master_password_exists():
         show_login_screen(root)

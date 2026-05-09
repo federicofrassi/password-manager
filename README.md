@@ -17,7 +17,7 @@ A local password manager written in Python.
 - Copy password to clipboard
 - Integrated real-time search bar
 - Interactive CLI interface
-- Tkinter GUI (work in progress)
+- Modern CustomTkinter GUI
 
 ## Technologies
 
@@ -26,6 +26,7 @@ A local password manager written in Python.
 - Cryptography (Fernet)
 - Git & GitHub
 - Tkinter
+- CustomTkinter
 
 ## Security Features
 
@@ -40,7 +41,7 @@ The project currently supports:
 - Authentication system
 - Password encryption/decryption
 - Full CRUD operations through CLI
-- Functional Tkinter GUI
+- Functional CustomTkinter GUI
 - Password masking/unmasking
 - Clipboard password copy
 - Integrated search system
@@ -49,7 +50,7 @@ The project currently supports:
 
 - Password generator
 - Better input validation
-- Improve GUI
+- Improve CustomTkinter GUI layout and styling
 - Stronger key derivation (Argon2/PBKDF2)
 - AES-GCM encryption
 - Auto-lock system
