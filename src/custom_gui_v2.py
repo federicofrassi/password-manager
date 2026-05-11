@@ -36,8 +36,6 @@ class PasswordManagerApp:
     def show_main_layout(self):
         self.clear_window()
 
-        self.root.geometry("1400x850")
-
         main_container = ctk.CTkFrame(self.root, corner_radius=0)
         main_container.pack(fill="both", expand=True)
 
@@ -63,7 +61,8 @@ class PasswordManagerApp:
         all_button = ctk.CTkButton(
             sidebar,
             text="Tutte le credenziali",
-            height=42
+            height=42,
+            command=lambda: load_credentials()
         )
         all_button.pack(fill="x", padx=20, pady=8)
 
@@ -72,7 +71,8 @@ class PasswordManagerApp:
             text="Recenti",
             height=42,
             fg_color="#2b2b2b",
-            hover_color="#3a3a3a"
+            hover_color="#3a3a3a",
+            command=lambda: show_recent_credentials()
         )
         recent_button.pack(fill="x", padx=20, pady=8)
 
@@ -81,7 +81,8 @@ class PasswordManagerApp:
             text="Password deboli",
             height=42,
             fg_color="#2b2b2b",
-            hover_color="#3a3a3a"
+            hover_color="#3a3a3a",
+            command=lambda: show_weak_passwords()
         )
         weak_button.pack(fill="x", padx=20, pady=8)
 
@@ -90,7 +91,8 @@ class PasswordManagerApp:
             text="Impostazioni",
             height=42,
             fg_color="#2b2b2b",
-            hover_color="#3a3a3a"
+            hover_color="#3a3a3a",
+            command=lambda: show_settings_placeholder()
         )
         settings_button.pack(fill="x", padx=20, pady=8)
 
@@ -148,6 +150,65 @@ class PasswordManagerApp:
 
             for credential in credentials:
                 add_credential_card(credential)
+
+        def show_recent_credentials():
+            search_entry.delete(0, "end")
+
+            credentials = get_all_credentials()
+            recent_credentials = sorted(
+                credentials,
+                key=lambda credential: credential[0],
+                reverse=True
+            )[:5]
+
+            load_credentials(recent_credentials)
+
+        def is_weak_password(password):
+            if len(password) < 8:
+                return True
+
+            has_digit = any(char.isdigit() for char in password)
+            has_upper = any(char.isupper() for char in password)
+            has_lower = any(char.islower() for char in password)
+            has_symbol = any(not char.isalnum() for char in password)
+
+            return not (has_digit and has_upper and has_lower and has_symbol)
+
+        def show_weak_passwords():
+            credentials = get_all_credentials()
+            weak_credentials = [
+                credential for credential in credentials
+                if is_weak_password(credential[3])
+            ]
+            load_credentials(weak_credentials)
+
+        def show_settings_placeholder():
+            for widget in credentials_list.winfo_children():
+                widget.destroy()
+
+            self.selected_credential = None
+            self.selected_card = None
+            self.selected_index = -1
+            self.credential_cards = []
+
+            self.detail_site.configure(text="Impostazioni")
+            self.detail_username.configure(text="")
+            self.detail_password.configure(text="")
+            self.detail_notes.configure(text="Qui potrai configurare auto-lock, tema, clipboard e backup.")
+
+            settings_label = ctk.CTkLabel(
+                credentials_list,
+                text="Impostazioni in sviluppo",
+                font=("Arial", 20, "bold")
+            )
+            settings_label.pack(pady=(40, 10))
+
+            settings_info = ctk.CTkLabel(
+                credentials_list,
+                text="In questa sezione aggiungeremo preferenze, sicurezza e backup.",
+                text_color="#A0A0A0"
+            )
+            settings_info.pack(pady=10)
 
         def search_credentials_from_entry(event=None):
             search_text = search_entry.get().strip().lower()
@@ -521,10 +582,11 @@ class PasswordManagerApp:
     def show_create_master_password_screen(self):
         self.clear_window()
 
-        self.root.geometry("520x420")
+        auth_container = ctk.CTkFrame(self.root, fg_color="transparent")
+        auth_container.pack(fill="both", expand=True)
 
-        auth_frame = ctk.CTkFrame(self.root, corner_radius=20)
-        auth_frame.pack(expand=True, padx=40, pady=40)
+        auth_frame = ctk.CTkFrame(auth_container, corner_radius=20)
+        auth_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         title_label = ctk.CTkLabel(
             auth_frame,
@@ -596,10 +658,11 @@ class PasswordManagerApp:
     def show_login_screen(self):
         self.clear_window()
 
-        self.root.geometry("520x380")
+        auth_container = ctk.CTkFrame(self.root, fg_color="transparent")
+        auth_container.pack(fill="both", expand=True)
 
-        auth_frame = ctk.CTkFrame(self.root, corner_radius=20)
-        auth_frame.pack(expand=True, padx=40, pady=40)
+        auth_frame = ctk.CTkFrame(auth_container, corner_radius=20)
+        auth_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         title_label = ctk.CTkLabel(
             auth_frame,
@@ -662,6 +725,8 @@ def main():
     root = ctk.CTk()
 
     root.title("Password Manager")
+    root.geometry("1300x750")
+    root.minsize(1200, 700)
 
     app = PasswordManagerApp(root)
 
